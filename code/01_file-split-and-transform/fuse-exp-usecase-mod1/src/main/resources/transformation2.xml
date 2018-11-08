@@ -4,47 +4,47 @@
         <wildcard>false</wildcard>
     </configuration>
     <mapping>
-        <class-a>org.acme.Customer</class-a>
-        <class-b>org.globex.Account</class-b>
+        <class-a>org.globex.Account</class-a>
+        <class-b>account.Account</class-b>
         <field>
-            <a>zip</a>
+            <a>contact.zip</a>
             <b>contact.zip</b>
         </field>
         <field>
-            <a>firstName</a>
+            <a>contact.firstName</a>
             <b>contact.firstName</b>
         </field>
         <field>
-            <a>lastName</a>
+            <a>contact.lastName</a>
             <b>contact.lastName</b>
         </field>
         <field>
-            <a>streetAddr</a>
+            <a>contact.streetAddr</a>
             <b>contact.streetAddr</b>
         </field>
         <field>
-            <a>city</a>
+            <a>contact.city</a>
             <b>contact.city</b>
         </field>
         <field>
-            <a>phone</a>
+            <a>contact.phone</a>
             <b>contact.phone</b>
         </field>
         <field>
-            <a>companyName</a>
-            <b>company.name</b>
+            <a>contact.state</a>
+            <b>contact.state</b>
         </field>
         <field>
-            <a>active</a>
-            <b>company.active</b>
-        </field>
-        <field>
-            <a>region</a>
+            <a>company.geo</a>
             <b>company.geo</b>
         </field>
         <field>
-            <a>state</a>
-            <b>contact.state</b>
+            <a>company.name</a>
+            <b>company.name</b>
+        </field>
+        <field>
+            <a>company.active</a>
+            <b>company.active</b>
         </field>
     </mapping>
 </mappings>

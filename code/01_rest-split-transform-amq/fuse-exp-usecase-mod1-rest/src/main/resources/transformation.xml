@@ -31,10 +31,6 @@
             <b>contact.phone</b>
         </field>
         <field>
-            <a>state</a>
-            <b>contact.state</b>
-        </field>
-        <field>
             <a>companyName</a>
             <b>company.name</b>
         </field>
@@ -45,6 +41,10 @@
         <field>
             <a>region</a>
             <b>company.geo</b>
+        </field>
+        <field>
+            <a>state</a>
+            <b>contact.state</b>
         </field>
     </mapping>
 </mappings>

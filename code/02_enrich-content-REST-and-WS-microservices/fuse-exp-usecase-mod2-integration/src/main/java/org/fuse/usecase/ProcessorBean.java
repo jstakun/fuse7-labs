@@ -1,20 +1,17 @@
 package org.fuse.usecase;
 
-import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.cxf.jaxrs.impl.ResponseImpl;
-import org.apache.cxf.message.MessageContentsList;
-import org.globex.Account;
-import org.globex.CorporateAccount;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.camel.Body;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.cxf.jaxrs.impl.ResponseImpl;
+import org.globex.Account;
 
 public class ProcessorBean {
 

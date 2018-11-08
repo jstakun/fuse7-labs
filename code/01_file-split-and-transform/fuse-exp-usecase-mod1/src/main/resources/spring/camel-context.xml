@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2014-2017, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. 
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- Configures the Camel Context-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <camelContext id="_camelContext1" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties" location="fabric8/route.properties"/>
+        <endpoint id="account_to_json" uri="dozer:account_to_json?sourceModel=org.globex.Account&amp;targetModel=account.Account&amp;marshalId=transform-json&amp;mappingFile=transformation2.xml"/>
+        <endpoint id="customer_to_account" uri="dozer:customer_to_account?sourceModel=org.acme.Customer&amp;targetModel=org.globex.Account&amp;mappingFile=transformation.xml"/>
+        <dataFormats>
+            <bindy classType="org.acme.Customer" id="csvToCustomer" type="Csv"/>
+            <json id="transform-json" library="Jackson"/>
+        </dataFormats>
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="file://src/data/error?fileName=csv-record-${date:now:yyyyMMdd}.txt"/>
+        </onException>
+        <route id="_route1">
+            <from id="_from1" uri="file://src/data/inbox?fileName=customers.csv&amp;noop=true"/>
+            <split id="_split1">
+                <tokenize token="\n"/>
+                <!--marshal id="_unmarshal2" ref="transform-json"/-->
+                <unmarshal id="_unmarshal1" ref="csvToCustomer"/>
+                <to id="_to3" uri="ref:customer_to_account"/>
+                <to id="_to2" uri="ref:account_to_json"/>
+                <to id="_to1" uri="file://src/data/outbox?fileName=account-${property.CamelSplitIndex}.json"/>
+            </split>
+        </route>
+        <route id="_route2">
+            <from id="_from2" uri="direct:csv2json-test-input"/>
+            <unmarshal id="_unmarshal2" ref="csvToCustomer"/>
+            <to id="_to4" uri="ref:customer_to_account"/>
+            <to id="_to5" uri="ref:account_to_json"/>
+            <to id="_to6" uri="mock:csv2json-test-output"/>
+        </route>
+    </camelContext>
+</beans>

@@ -5,5 +5,42 @@
     <!-- Define a traditional camel context here -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" location="route.properties"/>
+        <!--endpoint id="account_to_json" uri="dozer:account_to_json?sourceModel=org.globex.Account&amp;targetModel=account.Account&amp;marshalId=transform-json&amp;mappingFile=transformation2.xml"/-->
+        <endpoint id="customer_to_account" uri="dozer:customer_to_account?sourceModel=org.acme.Customer&amp;targetModel=org.globex.Account&amp;mappingFile=transformation.xml"/>
+        <dataFormats>
+            <bindy classType="org.acme.Customer" id="csvToCustomer" type="Csv"/>
+            <json id="transform-json" library="Jackson"/>
+        </dataFormats>
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <inOnly uri="amqp:queue:errorQueue"/>
+        </onException>
+        <restConfiguration component="servlet">
+            <dataFormatProperty key="prettyPrint" value="true"/>
+        </restConfiguration>
+        <rest id="rest-bf01d7b9-54aa-4348-873f-675fb913b06f" path="/service">
+            <post id="post-7d763d9a-e31a-40be-815b-dae8f603c7d6" uri="/customers">
+                <to uri="direct:inbox"/>
+            </post>
+        </rest>
+        <route id="_route1">
+            <from id="_from1" uri="direct:inbox"/>
+            <split id="_split1">
+                <tokenize token=";"/>
+                <!--to uri="mock:placeholder" /-->
+                <log id="_log1" message="${body}"/>
+                <unmarshal id="_unmarshal1" ref="csvToCustomer"/>
+                <log id="_log2" message="${body} ${body.companyName}"/>
+                <to id="_to1" uri="ref:customer_to_account"/>
+                <log id="_log3" message="${body} ${body.company.name}"/>
+                <marshal ref="transform-json" />
+                <!--to id="_to2" uri="ref:account_to_json"/-->
+                <log id="_log4" message="${body}"/>
+                <inOnly id="_inOnly1" uri="amqp:queue:accountQueue"/>
+            </split>
+        </route>
     </camelContext>
 </beans>
