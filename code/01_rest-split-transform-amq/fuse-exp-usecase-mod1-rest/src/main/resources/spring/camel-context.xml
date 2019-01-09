@@ -33,11 +33,11 @@
                 <!--to uri="mock:placeholder" /-->
                 <log id="_log1" message="${body}"/>
                 <unmarshal id="_unmarshal1" ref="csvToCustomer"/>
+                <!--to id="_to2" uri="ref:account_to_json"/-->
                 <log id="_log2" message="${body} ${body.companyName}"/>
                 <to id="_to1" uri="ref:customer_to_account"/>
                 <log id="_log3" message="${body} ${body.company.name}"/>
-                <marshal ref="transform-json" />
-                <!--to id="_to2" uri="ref:account_to_json"/-->
+                <marshal id="_marshal1" ref="transform-json"/>
                 <log id="_log4" message="${body}"/>
                 <inOnly id="_inOnly1" uri="amqp:queue:accountQueue"/>
             </split>

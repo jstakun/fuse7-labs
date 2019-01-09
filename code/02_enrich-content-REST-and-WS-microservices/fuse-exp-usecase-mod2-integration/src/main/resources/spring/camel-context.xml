@@ -14,16 +14,17 @@
       class CXF_Test.cxf_test.Book, ContentType: application/json
       <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
     -->
-    <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" id="jsonProvider"/>
+    <bean
+        class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" id="jsonProvider"/>
     <camelContext id="_camelContext1" xmlns="http://camel.apache.org/schema/spring">
         <dataFormats>
             <json id="transform-json" library="Jackson" unmarshalTypeName="org.globex.Account"/>
         </dataFormats>
         <route id="_route1">
             <from id="_from1" uri="amqp:queue:accountQueue"/>
-            <log message="Input json: ${body}" />
-            <unmarshal ref="transform-json"/>
-            <log message="${body}" />
+            <log id="_log1" message="Input json: ${body}"/>
+            <unmarshal id="_unmarshal1" ref="transform-json"/>
+            <log id="_log2" message="${body}"/>
             <multicast id="_multicast1" strategyRef="reconcileData">
                 <to id="_to1" uri="direct:callRestEndpoint"/>
                 <to id="_to2" uri="direct:callWSEndpoint"/>
@@ -35,7 +36,7 @@
         </route>
         <route id="_route2">
             <from id="_from2" uri="direct:callRestEndpoint"/>
-            <removeHeaders pattern="CamelHttp*"/>
+            <removeHeaders id="_removeHeaders1" pattern="CamelHttp*"/>
             <setHeader headerName="Content-Type" id="_setHeader1">
                 <constant>application/json</constant>
             </setHeader>
@@ -62,7 +63,7 @@
         </route>
         <route id="_route4">
             <from id="_from4" uri="direct:test"/>
-            <unmarshal ref="transform-json"/>
+            <unmarshal id="_unmarshal3" ref="transform-json"/>
             <multicast id="_multicast2" strategyRef="reconcileData">
                 <to id="_to6" uri="direct:callRestEndpoint"/>
                 <to id="_to7" uri="direct:callWSEndpoint"/>
